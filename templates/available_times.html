@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Times</title>
+</head>
+<body>
+    <h1>Available Appointment Times</h1>
+    <ul>
+        {% for event in events %}
+        <li>
+            <a href="{{ url_for('book', event_id=event['id']) }}">{{ event['start']['dateTime'] }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

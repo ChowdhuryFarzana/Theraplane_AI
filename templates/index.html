@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to AI-Powered Counseling</title>
+    
+    <!-- Import Google Font for Lofi Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap for basic styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS for Lofi Aesthetic -->
+    <style>
+        body {
+            background-color: #f2e9e4;
+            font-family: 'Poppins', sans-serif;
+            color: #5a4d4d;
+        }
+        .welcome-container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #22223b;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #4a4e69;
+        }
+        .help-button {
+            background-color: #9a8c98;
+            color: white;
+            padding: 10px 30px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 30px;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+        .help-button:hover {
+            background-color: #c9ada7;
+        }
+        .background-visual {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background-image: url('https://www.example.com/lofi-visual.jpg'); /* Replace with lofi visual */
+            background-position: center;
+            background-size: cover;
+            opacity: 0.15;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container welcome-container">
+        <h1>Welcome, Take a Deep Breath</h1>
+        <p>We’re here to listen. Whenever you're ready, we can help you get the support you need.</p>
+        <a href="{{ url_for('questionnaire') }}" class="help-button">Yes, I Need Help</a>
+    </div>
+
+    <!-- Lofi Background Image at the bottom -->
+    <div class="background-visual"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
