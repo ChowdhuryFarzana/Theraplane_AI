@@ -158,9 +158,14 @@
                 <div class="bubble">Hello! I'm here for you. What's your name?</div>
             </div>
         </div>
+        
+        
+        
+        
+    
 
         <!-- final message -->
-        <div id="chat-box" class="final chat-box hidden">
+        <div id="" class="final chat-box hidden">
             <!-- Chat messages will be dynamically added here -->
             <div class="final message bot ">
                 <div class="bubble"></div>
@@ -176,128 +181,178 @@
         <div class="encouragement" id="encouragement-text">You're doing great! Let's take it one step at a time.</div>
     </div>
 
+    <!-- pop up -->
+    <div id="theraplanePopup" class="flex bg-transparent justify-center items-center h-screen hidden">
+        <div class="container text-center bg-white/80 p-12 rounded-2xl shadow-lg max-w-md w-11/12">
+            <h1 class="font-pacifico text-4xl text-[#4A4E69] mb-5">Theraplane</h1>
+            <p class="text-lg text-[#4A4E69]">Your counseling session is ready to be scheduled.</p>
+            <div id="appointmentPopup" class="bg-[#f4f4f9]/80 p-5 rounded-xl shadow-xl text-center text-xl text-[#4A4E69] mt-5">
+                <h2 class="font-pacifico text-[#88bfb8] mb-3">Appointment Confirmed!</h2>
+                <p>Your appointment is scheduled for:</p>
+                <p id="appointmentDate"></p>
+            </div>
+
+            <!-- New part: ask if the user is OK with the appointment -->
+            <div id="confirmationPrompt" class="mt-5">
+                <p class="text-emerald-500 font-semibold">Are you okay with this appointment time?</p>
+                <button id="confirmYes" class="bg-teal-500 text-white px-4 py-2 rounded-lg mt-2">Yes</button>
+                <button id="confirmNo" class="bg-red-500 text-white px-4 py-2 rounded-lg mt-2">No</button>
+            </div>
+
+            <!-- New part: response after the user clicks Yes or No -->
+            <div id="finalMessage" class="mt-5 hidden">
+                <p id="responseMessage" class="text-[#4A4E69] font-semibold"></p>
+            </div>
+
+        </div>
+    </div>
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let messages = [];
-        let userData = {
-            name: "",
-            email: "",
-            concern: "",
-            urgency: ""
-        };
-        let currentStep = 0;
-        let conversationEnded = false;
-    
-        function addMessage(text, sender) {
-            const chatBox = document.getElementById('chat-box');
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', sender);
-    
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.classList.add('bubble');
-            bubbleDiv.textContent = text;
-    
-            messageDiv.appendChild(bubbleDiv);
-            chatBox.appendChild(messageDiv);
-    
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-    
-        function showEncouragingText() {
-            const encouragements = [
-                "You're doing great! Keep going.",
-                "Take a deep breath. We're here for you.",
-                "Your thoughts matter.",
-                "There's no rush. Take your time."
-            ];
-    
-            const encouragementText = document.getElementById('encouragement-text');
-            const randomIndex = Math.floor(Math.random() * encouragements.length);
-            encouragementText.textContent = encouragements[randomIndex];
-        }
-    
-        function sendMessage() {
-            if (conversationEnded) return;
-    
-            const inputArea = document.getElementById('response-input');
-            const message = inputArea.value.trim();
-            if (message) {
-                addMessage(message, 'user');
-                inputArea.value = '';
-    
-                // Save user response
-                if (currentStep === 0) userData.name = message;
-                if (currentStep === 1) userData.email = message;
-                if (currentStep === 2) userData.concern = message;
-                if (currentStep === 3) userData.urgency = message;
-    
-                fetch('/questionnaire', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ message: message, messages: messages }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    addMessage(data.message, 'bot');
-                    messages = data.messages;
-                    showEncouragingText();
-    
-                    if (data.urgency_rating !== null) {
-                        conversationEnded = true;
-                        document.getElementById('response-input').disabled = true;
-                        document.getElementById('send-btn').disabled = true;
-                        submitForm();
-                    }
-    
-                    currentStep++;
-                });
+let userData = {
+    name: "",
+    email: "",
+    concern: "",
+    urgency: ""
+};
+let currentStep = 0;
+let conversationEnded = false;
+
+function addMessage(text, sender) {
+    const chatBox = document.getElementById('chat-box');
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', sender);
+
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.classList.add('bubble');
+    bubbleDiv.textContent = text;
+
+    messageDiv.appendChild(bubbleDiv);
+    chatBox.appendChild(messageDiv);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function showEncouragingText() {
+    const encouragements = [
+        "You're doing great! Keep going.",
+        "Take a deep breath. We're here for you.",
+        "Your thoughts matter.",
+        "There's no rush. Take your time."
+    ];
+
+    const encouragementText = document.getElementById('encouragement-text');
+    const randomIndex = Math.floor(Math.random() * encouragements.length);
+    encouragementText.textContent = encouragements[randomIndex];
+}
+
+function sendMessage() {
+    if (conversationEnded) return;
+
+    const inputArea = document.getElementById('response-input');
+    const message = inputArea.value.trim();
+    if (message) {
+        addMessage(message, 'user');
+        inputArea.value = '';
+
+        // Save user response
+        if (currentStep === 0) userData.name = message;
+        if (currentStep === 1) userData.email = message;
+        if (currentStep === 2) userData.concern = message;
+        if (currentStep === 3) userData.urgency = message;
+
+        fetch('/questionnaire', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message, messages: messages }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            addMessage(data.message, 'bot');
+            messages = data.messages;
+            showEncouragingText();
+
+            // Check if appointment time is provided
+            if (data.appointment_time) {
+                updatePopupContent(data.appointment_time);
             }
-        }
-    
-        function submitForm() {
-            console.log(userData); // Log the data for now
-    
-            // Submit via AJAX
-            $.ajax({
-                url: "/questionnaire",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(userData),
-                success: function(response) {
-                    if (response.message) {
-                        displayFinalMessage(response.message);
-                    }
-                    if (response.appointment_time) {
-                        displayFinalMessage(`Your appointment is scheduled for: ${response.appointment_time}`);
-                    }
-                    if (response.redirect) {
-                        setTimeout(() => {
-                            window.location.href = response.redirect;
-                        }, 5000); // Redirect after 5 seconds
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error submitting form:", error);
-                    displayFinalMessage("An error occurred while processing your request. Please try again later.");
-                }
-            });
-        }
-    
-        function displayFinalMessage(message) {
-            const finalMessageDiv = document.querySelector('.final.chat-box');
-            finalMessageDiv.querySelector('.bubble').textContent = message;
-            finalMessageDiv.classList.remove('hidden');
-            
-            const chatBox = document.getElementById('chat-box');
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-    
-        document.getElementById('send-btn').addEventListener('click', sendMessage);
-        document.getElementById('response-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
+
+            currentStep++;
         });
+    }
+}
+
+function updatePopupContent(appointmentTime) {
+    const appointmentPopup = document.getElementById('appointmentPopup');
+    const appointmentDateElem = document.getElementById('appointmentDate');
+    appointmentDateElem.textContent = `Your appointment is scheduled for: ${appointmentTime}`;
+
+    showTheraplanePopup(); // Show the Theraplane popup
+    promptAppointmentConfirmation(); // Ask the user if they're okay with the appointment time
+}
+
+function showTheraplanePopup() {
+    const theraplanePopup = document.getElementById('theraplanePopup');
+    theraplanePopup.classList.remove('hidden'); // Show the popup
+}
+
+function promptAppointmentConfirmation() {
+    const confirmYes = document.getElementById('confirmYes');
+    const confirmNo = document.getElementById('confirmNo');
+
+    // If the user confirms the appointment
+    confirmYes.addEventListener('click', () => {
+        showFinalMessage("Great! We're looking forward to seeing you.");
+    });
+
+    // If the user rejects the appointment
+    confirmNo.addEventListener('click', () => {
+        showFinalMessage("No worries! Please check your email for better dates to reschedule.");
+    });
+}
+
+function showFinalMessage(message) {
+    const confirmationPrompt = document.getElementById('confirmationPrompt');
+    const finalMessageDiv = document.getElementById('finalMessage');
+    const responseMessage = document.getElementById('responseMessage');
+
+    // Hide the confirmation buttons and show the final message
+    confirmationPrompt.classList.add('hidden');
+    finalMessageDiv.classList.remove('hidden');
+    responseMessage.textContent = message;
+}
+
+function submitForm() {
+    console.log(userData); // Log the data for now
+
+    // Submit via AJAX
+    $.ajax({
+        url: "/questionnaire",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(userData),
+        success: function(response) {
+            if (response.appointment_time) {
+                updatePopupContent(response.appointment_time);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error submitting form:", error);
+            updatePopupContent("An error occurred while processing your request. Please try again later.");
+        }
+    });
+}
+
+// Event listeners for sending messages
+document.getElementById('send-btn').addEventListener('click', sendMessage);
+document.getElementById('response-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') sendMessage();
+});
+
     </script>
 
 </body>
