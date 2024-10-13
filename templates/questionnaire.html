@@ -6,10 +6,16 @@
     <title>Interactive Chat Questionnaire</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
     <style>
+        /* Your existing CSS styles here */
+    </style>
+</head>
+<body>
+
+    <style>
         body {
-            background-color: #f2e9e4;
+            background-color: #ebece6;
             font-family: 'Poppins', sans-serif;
-            color: #4a4e69;
+            color: #E2F0D9;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,7 +26,7 @@
         .chat-container {
             max-width: 900px;
             width: 100%;
-            background-color: #ffffff; /* White background */
+            background-color: #E0D9D1; /* White background */
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -42,7 +48,15 @@
             align-items: flex-start;
         }
 
+        .message.bot .bubble {
+            background-color: #E9E9E7;
+            color: teal;
+            align-self: flex-start;
+        }
+
         .message .bubble {
+            background-color: #E9E9E7;
+            color: teal;
             border-radius: 20px;
             padding: 12px 18px;
             font-size: 1.1rem;
@@ -57,11 +71,7 @@
             justify-content: flex-start;
         }
 
-        .message.bot .bubble {
-            background-color: #9a8c98;
-            color: #fff;
-            align-self: flex-start;
-        }
+       
 
         /* Position user (answers) to the right */
         .message.user {
@@ -69,8 +79,8 @@
         }
 
         .message.user .bubble {
-            background-color: #c9ada7;
-            color: #fff;
+            background-color: #E2F0D9;
+            color: teal;
             align-self: flex-end;
         }
 
@@ -86,11 +96,25 @@
             border-radius: 25px;
             border: 1px solid #ccc;
             margin-right: 10px;
+            color: teal;
+        }
+        .response-input::-webkit-input-placeholder {
+            color: teal;
+
+        }
+
+        .response-input::-ms-input-placeholder {
+            color: teal; 
+        }
+
+        .response-input:-ms-input-placeholder {
+            color: teal;
+
         }
 
         .send-btn {
-            background-color: #9a8c98;
-            color: white;
+            background-color: #E2F0D9;
+            color: teal;
             padding: 10px 20px;
             border: none;
             border-radius: 25px;
@@ -98,9 +122,9 @@
             transition: background-color 0.3s ease;
         }
 
-        .send-btn:hover {
+        /* .send-btn:hover {
             background-color: #c9ada7;
-        }
+        } */
 
         /* Animation for chat bubbles */
         @keyframes pop-in {
@@ -117,12 +141,13 @@
         /* Encouraging text styling */
         .encouragement {
             font-size: 0.9rem;
-            color: #6d6875;
+            color: teal;
             margin-top: 15px;
             font-style: italic;
             text-align: center;
         }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 
@@ -131,6 +156,14 @@
             <!-- Chat messages will be dynamically added here -->
             <div class="message bot">
                 <div class="bubble">Hello! I'm here for you. What's your name?</div>
+            </div>
+        </div>
+
+        <!-- final message -->
+        <div id="chat-box" class="final chat-box hidden">
+            <!-- Chat messages will be dynamically added here -->
+            <div class="final message bot ">
+                <div class="bubble"></div>
             </div>
         </div>
 
@@ -143,73 +176,33 @@
         <div class="encouragement" id="encouragement-text">You're doing great! Let's take it one step at a time.</div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        let currentStep = 0;
-        const questions = [
-            "Hello! I'm here for you. What's your name?",
-            "What is your email address?",
-            "Can you briefly describe your concern?",
-            "On a scale of 1 to 5, how urgent is your concern?"
-        ];
-
-        const userData = {
+        let messages = [];
+        let userData = {
             name: "",
             email: "",
             concern: "",
             urgency: ""
         };
-
-        function nextMessage() {
-            const input = document.getElementById('response-input').value.trim();
-            
-            if (input === "") {
-                alert("Please provide a response.");
-                return;
-            }
-
-            // Add user response as a chat bubble
-            addMessage(input, 'user');
-
-            // Save user response
-            if (currentStep === 0) userData.name = input;
-            if (currentStep === 1) userData.email = input;
-            if (currentStep === 2) userData.concern = input;
-            if (currentStep === 3) userData.urgency = input;
-
-            document.getElementById('response-input').value = "";
-            currentStep++;
-
-            // End of questions
-            if (currentStep >= questions.length) {
-                submitForm();
-                return;
-            }
-
-            // Show the next question after a slight delay
-            setTimeout(() => {
-                addMessage(questions[currentStep], 'bot');
-                showEncouragingText();
-            }, 500);
-        }
-
-        // Function to add messages to the chatbox
+        let currentStep = 0;
+        let conversationEnded = false;
+    
         function addMessage(text, sender) {
             const chatBox = document.getElementById('chat-box');
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
-
+    
             const bubbleDiv = document.createElement('div');
             bubbleDiv.classList.add('bubble');
             bubbleDiv.textContent = text;
-
+    
             messageDiv.appendChild(bubbleDiv);
             chatBox.appendChild(messageDiv);
-
-            // Scroll to the bottom of the chat box
+    
             chatBox.scrollTop = chatBox.scrollHeight;
         }
-
-        // Show supportive text after each response
+    
         function showEncouragingText() {
             const encouragements = [
                 "You're doing great! Keep going.",
@@ -217,28 +210,94 @@
                 "Your thoughts matter.",
                 "There's no rush. Take your time."
             ];
-
+    
             const encouragementText = document.getElementById('encouragement-text');
             const randomIndex = Math.floor(Math.random() * encouragements.length);
             encouragementText.textContent = encouragements[randomIndex];
         }
-
-        // Submit form data via AJAX
+    
+        function sendMessage() {
+            if (conversationEnded) return;
+    
+            const inputArea = document.getElementById('response-input');
+            const message = inputArea.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                inputArea.value = '';
+    
+                // Save user response
+                if (currentStep === 0) userData.name = message;
+                if (currentStep === 1) userData.email = message;
+                if (currentStep === 2) userData.concern = message;
+                if (currentStep === 3) userData.urgency = message;
+    
+                fetch('/questionnaire', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message, messages: messages }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    addMessage(data.message, 'bot');
+                    messages = data.messages;
+                    showEncouragingText();
+    
+                    if (data.urgency_rating !== null) {
+                        conversationEnded = true;
+                        document.getElementById('response-input').disabled = true;
+                        document.getElementById('send-btn').disabled = true;
+                        submitForm();
+                    }
+    
+                    currentStep++;
+                });
+            }
+        }
+    
         function submitForm() {
             console.log(userData); // Log the data for now
-
+    
             // Submit via AJAX
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "{{ url_for('questionnaire') }}", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    window.location.href = "/available_times";
+            $.ajax({
+                url: "/questionnaire",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(userData),
+                success: function(response) {
+                    if (response.message) {
+                        displayFinalMessage(response.message);
+                    }
+                    if (response.appointment_time) {
+                        displayFinalMessage(`Your appointment is scheduled for: ${response.appointment_time}`);
+                    }
+                    if (response.redirect) {
+                        setTimeout(() => {
+                            window.location.href = response.redirect;
+                        }, 5000); // Redirect after 5 seconds
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error submitting form:", error);
+                    displayFinalMessage("An error occurred while processing your request. Please try again later.");
                 }
-            };
-
-            xhr.send(JSON.stringify(userData));
+            });
         }
+    
+        function displayFinalMessage(message) {
+            const finalMessageDiv = document.querySelector('.final.chat-box');
+            finalMessageDiv.querySelector('.bubble').textContent = message;
+            finalMessageDiv.classList.remove('hidden');
+            
+            const chatBox = document.getElementById('chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    
+        document.getElementById('send-btn').addEventListener('click', sendMessage);
+        document.getElementById('response-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
     </script>
 
 </body>
