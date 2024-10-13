@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from openai import OpenAI
-# from apikey import my_api as apikey
+from apikey import my_api as apikey
 import datetime
 from datetime import timedelta
 import re
@@ -10,7 +10,7 @@ now = datetime.datetime.now()
 app = Flask(__name__)
 
 # Load OpenAI API key from environment variable
-os.environ["OPENAI_API_KEY"] = apikey
+apikey= os.environ["OPENAI_API_KEY"] 
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 # Define the system prompt
