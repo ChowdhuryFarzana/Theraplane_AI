@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from openai import OpenAI
-from apikey import my_api as apikey
+# from apikey import my_api as apikey
 import datetime
 from datetime import timedelta
 import re
@@ -57,61 +57,74 @@ def schedule(name, urgent_lvl):
 def index():
     """Displays the homepage."""
     return render_template('index.html')
-
 @app.route('/questionnaire', methods=['GET', 'POST'])
 def questionnaire():
     if request.method == 'POST':
         data = request.get_json()
-        
+
         # Check if this is a message for the AI conversation
         if 'message' in data:
             user_input = data['message']
             messages = data.get('messages', [])
-            
+
             if not messages:
                 messages = [{"role": "system", "content": system_prompt}]
-            
+
             messages.append({"role": "user", "content": user_input})
-            
+
             ai_response = get_ai_response(messages)
             urgency_rating, filtered_response = extract_urgency_rating(ai_response)
-            
+
             messages.append({"role": "assistant", "content": ai_response})
-            
+
             response_data = {
                 "message": filtered_response,
                 "urgency_rating": urgency_rating,
                 "messages": messages
             }
-            
+
+            # If the urgency rating is 5, schedule an emergency appointment
+            if urgency_rating == 5:
+                appointment_time, description = schedule("user", urgency_rating)
+                response_data["appointment_time"] = appointment_time.strftime("%Y-%m-%d %H:%M")
+                response_data["message"] += f"\n\n{description} Your appointment is scheduled for {appointment_time.strftime('%Y-%m-%d %H:%M')}"
+
             return jsonify(response_data)
-        
+
         # If it's the final form submission
         elif 'name' in data:
+            print("Not there")
             name = data.get('name')
             email = data.get('email')
             concern = data.get('concern')
-            print(f"The data urgency is {data.get('urgency')}")
-            if data.get('urgency')=='':
-                urgency=5
+
+            # Handle urgency more robustly
+            urgency_data = data.get('urgency')
+            if isinstance(urgency_data, str) and urgency_data.isdigit():
+                urgency = int(urgency_data)
+            elif isinstance(urgency_data, int):
+                urgency = urgency_data
             else:
-                urgency = int(data.get('urgency'))  # Convert to int
-            
+                # If urgency is not a valid number, default to highest urgency
+                print(f"Invalid urgency value: {urgency_data}. Defaulting to highest urgency.")
+                urgency = 5
+
             # Save data to database (implement this part)
-            
+
             # Schedule appointment
             appointment_time, description = schedule(name, urgency)
-            
+
             final_response = {
                 'message': f'{description} Your appointment is scheduled for {appointment_time.strftime("%Y-%m-%d %H:%M")}',
                 'appointment_time': appointment_time.strftime("%Y-%m-%d %H:%M")
             }
             return jsonify(final_response)
-        
+
         else:
             return jsonify({"error": "Invalid data format"}), 400
-    
+
     return render_template('questionnaire.html')
+
 
 @app.route('/available_times')
 def available_times():
