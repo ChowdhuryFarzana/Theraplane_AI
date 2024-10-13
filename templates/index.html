@@ -3,46 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to AI-Powered Calendar</title>
+    <title>Welcome to Theraplane</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            background-color: #f9eae1;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f9;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
         }
+
         .container {
             text-align: center;
-            background-color: #fff;
+            background-color: #ffffff;
             padding: 50px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 2;
+            position: relative;
+            animation: fadeIn 1s ease;
         }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
         h1 {
-            color: #333;
+            font-family: 'Pacifico', cursive;
+            font-size: 2.8rem;
+            color: #4A4E69;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
         }
+
+        p {
+            font-size: 1.1rem;
+            color: #4A4E69;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
         a {
             display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #9a8c98;
-            color: #fff;
+            background-color: #88bfb8;
+            color: #ffffff;
+            padding: 12px 30px;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(136, 191, 184, 0.4);
         }
+
         a:hover {
-            background-color: #c9ada7;
+            background-color: #6eada8;
+            box-shadow: 0 6px 15px rgba(136, 191, 184, 0.7);
+            transform: scale(1.05);
         }
+
+        .supportive-message {
+            margin-top: 30px;
+            font-size: 1rem;
+            color: #88bfb8;
+            font-style: italic;
+        }
+
+        /* Background Elements */
+        .circle-large {
+            position: absolute;
+            border-radius: 50%;
+            background-color: #FDEDE5;
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        .circle-small {
+            position: absolute;
+            border-radius: 50%;
+            background-color: #F8C8DC;
+            width: 120px;
+            height: 120px;
+            bottom: -50px;
+            right: -50px;
+            z-index: 1;
+            opacity: 0.6;
+        }
+
+        /* Aesthetic Tree Branches */
+        .branch-left {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 150px;
+            height: 150px;
+            background-image: url('https://www.pngmart.com/files/11/Aesthetic-Tree-Branch-PNG.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+            z-index: 0;
+        }
+
+        .branch-right {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background-image: url('https://www.pngmart.com/files/11/Aesthetic-Tree-Branch-PNG.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transform: scaleX(-1);
+            opacity: 0.7;
+            z-index: 0;
+        }
+
+        /* Flowers */
+        .flower-left {
+            position: absolute;
+            bottom: 0;
+            left: 40px;
+            width: 100px;
+            height: 100px;
+            background-image: url('https://freepngimg.com/thumb/flower/2-2-flower-transparent.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        .flower-right {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            background-image: url('https://freepngimg.com/thumb/flower/2-2-flower-transparent.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        /* Interactive Cat */
+        .cat {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 150px;
+            background-image: url('https://freepngimg.com/thumb/cat/2-2-cat-png-picture.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 3;
+            cursor: pointer;
+            animation: catMove 3s infinite alternate ease-in-out;
+        }
+
+        .cat:hover {
+            animation: catPlay 1s infinite alternate ease-in-out;
+        }
+
+        /* Floating Leafs */
+        .leaf {
+            position: absolute;
+            background-image: url('https://www.pngmart.com/files/22/Green-Leaves-PNG-Clipart.png');
+            background-size: cover;
+            width: 80px;
+            height: 80px;
+            animation: floatLeaf 5s infinite ease-in-out;
+        }
+
+        .leaf-1 {
+            top: 20px;
+            left: 20px;
+        }
+
+        .leaf-2 {
+            top: 200px;
+            left: 250px;
+        }
+
+        .leaf-3 {
+            top: 300px;
+            right: 150px;
+        }
+
+        /* Floating emojis */
+        .emoji {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatEmoji 4s infinite ease-in-out;
+        }
+
+        .emoji-1 {
+            top: 100px;
+            right: 20px;
+        }
+
+        .emoji-2 {
+            bottom: 50px;
+            left: 50px;
+        }
+
+        .emoji-3 {
+            bottom: 150px;
+            right: 150px;
+        }
+
+        /* Animation Keyframes */
+        @keyframes floatLeaf {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatEmoji {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes catMove {
+            0% {
+                transform: translateX(-50%) translateY(0);
+            }
+            100% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+
+        @keyframes catPlay {
+            0% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+            100% {
+                transform: translateX(-50%) rotate(10deg);
+            }
+        }
+
     </style>
 </head>
 <body>
+
+    <div class="circle-large"></div>
+    <div class="circle-small"></div>
+
+    <!-- Aesthetic Tree Branches and Flowers -->
+    <div class="branch-left"></div>
+    <div class="branch-right"></div>
+    <div class="flower-left"></div>
+    <div class="flower-right"></div>
+
+    <!-- Interactive Cat -->
+    <div class="cat"></div>
+
+    <!-- Floating Leafs -->
+    <div class="leaf leaf-1"></div>
+    <div class="leaf leaf-2"></div>
+    <div class="leaf leaf-3"></div>
+
+    <!-- Floating Emojis -->
+    <div class="emoji emoji-1">💚</div>
+    <div class="emoji emoji-2">🌿</div>
+    <div class="emoji emoji-3">🌸</div>
+
     <div class="container">
-        <h1>Welcome to AI-Powered Counseling</h1>
-        <p>We are here to help you schedule your counseling appointments.</p>
-        <a href="/questionnaire">Start Your Questionnaire</a>
+        <h1>Theraplane</h1>
+        <p>We are here to guide you through scheduling your counseling appointment. 🌿<br> Let's take this journey together.</p>
+        <a href="/questionnaire">Start Your Journey</a>
+        <div class="supportive-message">
+            <p>✨ "You are strong, and we are here for you. Let's take it one step at a time." ✨</p>
+        </div>
     </div>
+
 </body>
 </html>
